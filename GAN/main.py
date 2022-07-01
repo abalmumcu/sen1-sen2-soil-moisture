@@ -1,4 +1,4 @@
-from GAN_model import gan_model
+from GAN.GAN_model import gan_model
 
 image_shape = (256,256,3)
 
