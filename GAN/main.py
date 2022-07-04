@@ -1,4 +1,7 @@
 from GAN.GAN_model import gan_model
+from GAN.utils import image_load
+
+
 
 image_shape = (256,256,3)
 

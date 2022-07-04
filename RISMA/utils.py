@@ -31,5 +31,7 @@ class dataset:
                 self.avaliable_data_dates.append(date)
                 self.avaliable_datas.append(soil)
                 self.avaliable_prep_data.append(prep)
+
+    
                     
 
