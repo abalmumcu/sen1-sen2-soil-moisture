@@ -2,7 +2,12 @@ import os
 import numpy as np
 from osgeo import gdal 
 import matplotlib.pyplot as plt
+from sklearn.preprocessing import MinMaxScaler
 
+def normalization(data):
+    scaler = MinMaxScaler() 
+    data_scaled = scaler.fit_transform(data)
+    return data_scaled
 
 def image_load(img_path,sentinel_type=1):
     try:
@@ -14,9 +19,9 @@ def image_load(img_path,sentinel_type=1):
     for img in images:
         image_list = []
         data = gdal.Open(img_path+'/'+ img, gdal.GA_ReadOnly) 
-        rgb = np.stack([(data.GetRasterBand(b).ReadAsArray()) for b in (1,2,3)] ,axis=2)
+        rgb = np.stack([normalization(data.GetRasterBand(b).ReadAsArray()) for b in (1,2,3)] ,axis=2)
         if sentinel_type == 2:
-            features = np.stack([(data.GetRasterBand(b).ReadAsArray()) for b in (10,11,12)] ,axis=2)
+            features = np.stack([normalization(data.GetRasterBand(b).ReadAsArray()) for b in (10,11,12)] ,axis=2)
             feature_list.append(features)
 
         image_list.append(rgb)
@@ -49,5 +54,5 @@ def dataset(dataset_path,sentinel_type=1):
 
 
 
-sentinel_1_path= "./extracted_images/Sentinel1/Sentinel1_crop_"
-sentinel_2_path= "./extracted_images/Sentinel2/Sentinel2_crop_"
+# sentinel_1_path= "./extracted_images/Sentinel1/Sentinel1_crop_"
+# sentinel_2_path= "./extracted_images/Sentinel2/Sentinel2_crop_"

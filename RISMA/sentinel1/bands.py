@@ -1,6 +1,7 @@
 import ee
 import numpy as np
 
+
 def VV_band(img):
   temp = img.select('VV')
   temp_img = temp.reduceRegion(ee.Reducer.mean(),Area)
