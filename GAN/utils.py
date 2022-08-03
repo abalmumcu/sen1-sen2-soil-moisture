@@ -35,18 +35,18 @@ def image_load(img_path,sentinel_type=1):
 
 def dataset(dataset_path,sentinel_type=1):
     if sentinel_type == 2:
-        bands_dataset = np.zeros(shape=(13,256,256,3))
-        feature_dataset = np.zeros(shape=(13,256,256,3))
+        bands_dataset = np.empty(13,dtype=object)
+        feature_dataset = np.empty(13,dtype=object)
         for station in range(1,14):
             tmp_dataset,tmp_feature_dataset = image_load(f'{dataset_path}{str(station)}',sentinel_type=2)
             bands_dataset[station-1] = tmp_dataset
             feature_dataset[station-1] = tmp_feature_dataset
         return bands_dataset,feature_dataset
     elif sentinel_type ==1:
-        bands_dataset = np.zeros(shape=(None,13,256,256,3))
+        bands_dataset = np.empty(13,dtype=object)
         for station in range(1,14):
             tmp_dataset = image_load(f'{dataset_path}{str(station)}',sentinel_type=1)
-            bands_dataset[:,station-1,:,:,:] = tmp_dataset # Yemez. Farklı sayıda arrayler var. Bak buna! ValueError: could not broadcast input array from shape (145,256,256,3) into shape (256,256,3)
+            bands_dataset[station-1] = tmp_dataset
         return bands_dataset
     else:
         print("[TYPE_ERROR] Given wrong sentinel type number! Please give '1' or '2' for progress.")
