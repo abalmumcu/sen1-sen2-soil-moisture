@@ -145,16 +145,16 @@ class gan_model():
 
     def save_models(step, g_model_AtoB, g_model_BtoA , d_model_A, d_model_B):
     # save the first generator model
-        filename1 = './Risma/g_model_AtoB_%06d.h5' % (step+1)
+        filename1 = '.GAN/models/g_model_AtoB_%06d.h5' % (step+1)
         g_model_AtoB.save(filename1)
 
         # save the second generator model
-        filename2 = './Risma/g_model_BtoA_%06d.h5' % (step+1)
+        filename2 = '.GAN/models/g_model_BtoA_%06d.h5' % (step+1)
         g_model_BtoA.save(filename2)
 
-        filename3 = './Risma/d_model_A_%06d.h5' % (step+1)
+        filename3 = '.GAN/models/d_model_A_%06d.h5' % (step+1)
         d_model_A.save(filename3)
-        filename4 = './Risma/d_model_B_%06d.h5' % (step+1)
+        filename4 = '.GAN/models/d_model_B_%06d.h5' % (step+1)
         d_model_B.save(filename4)
         print('>Saved: %s and %s and %s and %s' % (filename1, filename2, filename3, filename4))
 
@@ -176,7 +176,7 @@ class gan_model():
             pyplot.subplot(2, n_samples, 1 + n_samples + i)
             pyplot.axis('off')
             pyplot.imshow(X_out[i])
-        filename1 = './Risma/%s_generated_plot_%06d.png' % (name, (step+1))
+        filename1 = './GAN/generated_samples/%s_generated_plot_%06d.png' % (name, (step+1))
         pyplot.savefig(filename1)
         pyplot.close()
 
