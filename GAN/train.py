@@ -21,8 +21,5 @@ c_model_BtoA = gan_model.define_composite_model(g_model_BtoA, d_model_A, g_model
 
 
 if __name__ == "__main__":
-    #gan_model.train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA,Sen2,Sen1)
-    print(np.shape(Sen1))
-    print('*'*10)
-    print(np.shape(Sen2))
+    gan_model.train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA,Sen2,Sen1)
 
