@@ -3,7 +3,7 @@ from functools import reduce
 import numpy as np
 class dataset:
     def read_csv(csv_path):
-        df = pd.read_csv(csv_path,infer_datetime_format=True)
+        df = pd.read_csv(csv_path)
         df_renamed = df.rename({'Reading Time (CST)':'Date'}, axis=1)
         if '0 to 5 cm Depth Average WFV (%)' in df_renamed: 
             df_no_data_removed = df_renamed.loc[df_renamed['0 to 5 cm Depth Average WFV (%)'] != 'No Data']
@@ -20,8 +20,8 @@ class dataset:
             df_no_data_removed =  df_no_data_removed.rename({'0-5 cm Depth Average WFV (%)':'0-5cm Soil'},axis=1)
 
         df_no_data_removed['Date'] =  pd.to_datetime(df_no_data_removed['Date'], 
-                                                     infer_datetime_format=True
-                                                    )
+                                                     infer_datetime_format=True, 
+                                                     format='%d/%m/%y')
         return df_no_data_removed   
     
     def get_soil_prep_date(csv_path,prename):
@@ -59,13 +59,7 @@ class dataset:
                                                     how='outer'), df_list)
         df = df_merged.replace(np.nan,'',regex=True)
         df = df.replace('No Data', '')
-        df = df.sort_values(by='Date')
 
-        for i in range(1,14):
-            df[f'Soil_{str(i)}'] = pd.to_numeric(df[f'Soil_{str(i)}'], downcast="float")
-            df[f'Prep_{str(i)}'] = pd.to_numeric(df[f'Prep_{str(i)}'], downcast="float")
-
-        df['Date'] =  pd.to_datetime(df['Date'], infer_datetime_format=True)        
         return df
     
     
