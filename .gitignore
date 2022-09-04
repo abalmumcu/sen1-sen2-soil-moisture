@@ -1,2 +1,4 @@
 geo/
 extracted_images/
+*.ipynb
+/.ipynb_checkpoints
