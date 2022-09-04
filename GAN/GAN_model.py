@@ -5,7 +5,6 @@ from keras.layers import Input
 from keras.models import Model
 from keras.layers import Conv2D, LeakyReLU, Activation, Concatenate, Conv2DTranspose
 from keras_contrib.layers.normalization.instancenormalization import InstanceNormalization
-# from keras.preprocessing.image import img_to_array, load_img
 import keras.backend as K
 from matplotlib import pyplot
 import random
@@ -115,7 +114,7 @@ class gan_model():
         model.compile(loss=['mse', 'mae', 'mae', 'mae'], loss_weights=[1, 5, 10, 10], optimizer=Adam(lr=0.0002, beta_1=0.5))
         return model
 
-    def generate_real_samples(dataset, n_samples, patch_shape):
+    def generate_real_samples(dataset, n_samples, patch_shape): 
         ix = np.random.randint(0, dataset.shape[0], n_samples)
         # retrieve selected images
         X = dataset[ix]
@@ -145,16 +144,16 @@ class gan_model():
 
     def save_models(step, g_model_AtoB, g_model_BtoA , d_model_A, d_model_B):
     # save the first generator model
-        filename1 = '.GAN/models/g_model_AtoB_%06d.h5' % (step+1)
+        filename1 = './GAN/models/g_model_AtoB_%06d.h5' % (step+1)
         g_model_AtoB.save(filename1)
 
         # save the second generator model
-        filename2 = '.GAN/models/g_model_BtoA_%06d.h5' % (step+1)
+        filename2 = './GAN/models/g_model_BtoA_%06d.h5' % (step+1)
         g_model_BtoA.save(filename2)
 
-        filename3 = '.GAN/models/d_model_A_%06d.h5' % (step+1)
+        filename3 = './GAN/models/d_model_A_%06d.h5' % (step+1)
         d_model_A.save(filename3)
-        filename4 = '.GAN/models/d_model_B_%06d.h5' % (step+1)
+        filename4 = './GAN/models/d_model_B_%06d.h5' % (step+1)
         d_model_B.save(filename4)
         print('>Saved: %s and %s and %s and %s' % (filename1, filename2, filename3, filename4))
 
@@ -181,7 +180,7 @@ class gan_model():
         pyplot.close()
 
     def train(d_model_A, d_model_B, g_model_AtoB, g_model_BtoA, c_model_AtoB, c_model_BtoA, trainA, trainB):
-        n_epochs, n_batch, = 20, 1
+        n_epochs, n_batch, = 10, 8
         n_patch = d_model_A.output_shape[1]
         poolA, poolB = list(), list()
         n_steps = int(len(trainA)) * n_epochs
@@ -192,8 +191,8 @@ class gan_model():
             X_realB, y_realB = gan_model.generate_real_samples(trainB, n_batch, n_patch)
             X_fakeA, y_fakeA = gan_model.generate_fake_samples(g_model_BtoA, X_realB, n_patch)
             X_fakeB, y_fakeB = gan_model.generate_fake_samples(g_model_AtoB, X_realA, n_patch)
-            #X_fakeA = update_image_pool(poolA, X_fakeA)
-            #X_fakeB = update_image_pool(poolB, X_fakeB)
+            # X_fakeA = gan_model.update_image_pool(poolA, X_fakeA)
+            # X_fakeB = gan_model.update_image_pool(poolB, X_fakeB)
             g_loss2, _, _, _, _  = c_model_BtoA.train_on_batch([X_realB, X_realA], [y_realA, X_realA, X_realB, X_realA])
             dA_loss1 = d_model_A.train_on_batch(X_realA, y_realA)
             dA_loss2 = d_model_A.train_on_batch(X_fakeA, y_fakeA)
@@ -202,11 +201,14 @@ class gan_model():
             dB_loss2 = d_model_B.train_on_batch(X_fakeB, y_fakeB)
             # summarize_performance(i, g_model_AtoB, trainA, 'S2toS1')
             # summarize_performance(i, g_model_BtoA, trainB, 'S1toS2')
-            print('>%d, dA[%.3f,%.3f] dB[%.3f,%.3f] g[%.3f,%.3f]' % (i+1, dA_loss1, dA_loss2, dB_loss1, dB_loss2, g_loss1, g_loss2))
-            if (i+1) % int(len(trainA)) == 0:
+            print('>%d/%d, dA[%.3f,%.3f] dB[%.3f,%.3f] g[%.3f,%.3f]' % (i+1, n_steps ,dA_loss1, dA_loss2, dB_loss1, dB_loss2, g_loss1, g_loss2))
+            if (i+1) % 10 == 0:
+
                 gan_model.summarize_performance(i, g_model_AtoB, trainA, 'S2toS1')
                 gan_model.summarize_performance(i, g_model_BtoA, trainB, 'S1toS2')
-                gan_model.save_models(i, g_model_AtoB, g_model_BtoA , d_model_A, d_model_B)
+                if (i+1) % int(len(trainA)) == 0:
+
+                    gan_model.save_models(i, g_model_AtoB, g_model_BtoA , d_model_A, d_model_B)
 
                 learning_rate *= 0.90
                 K.set_value(c_model_AtoB.optimizer.lr , learning_rate)

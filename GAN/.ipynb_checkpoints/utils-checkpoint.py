@@ -27,7 +27,7 @@ def image_load(img_path,sentinel_type=1):
         if sentinel_type == 1:
             rgb = np.stack([normalization(data.GetRasterBand(b).ReadAsArray()) for b in range(1,4)] ,axis=2)
         if sentinel_type == 2:
-            rgb = np.stack([normalization(data.GetRasterBand(b).ReadAsArray()) for b in range(1,4)] ,axis=2)
+            rgb = np.stack([(data.GetRasterBand(b).ReadAsArray()) for b in range(1,4)] ,axis=2)
             features = np.stack([normalization(data.GetRasterBand(b).ReadAsArray()) for b in range(10,13)] ,axis=2)
             feature_list.append(features)
         image_list.append(rgb)
@@ -35,7 +35,7 @@ def image_load(img_path,sentinel_type=1):
     if sentinel_type == 2: 
         feature_dataset = np.array(feature_list, dtype="float")
         return dataset,feature_dataset
-    return dataset
+    return dataset  
 
 def normalize(image):
     norm = (image - np.min(image)) / (np.max(image) - np.min(image))
@@ -43,25 +43,30 @@ def normalize(image):
 
 def filter_night_images(images):
     filtered_imgs = [] 
-    images_pow = images ** 3 
-    for imgs_pow,imgs in zip(images_pow, images):
-        if imgs_pow.mean() > ((-0.9) ** 3):
+    images_pow = normalize(images) ** 3 
+    for imgs in images_pow:
+        if imgs.mean() > -0.9:
             filtered_imgs.append(imgs)
-    return np.array(filtered_imgs, dtype="float")
 
 
 def dataset(dataset_path,sentinel_type=1):
     if sentinel_type == 2:
         bands_dataset = np.empty(13,dtype=object)
+        feature_dataset = np.empty(13,dtype=object)
         for station in range(1,14):
-            tmp_dataset = filter_night_images(image_load(f'{dataset_path}{str(station)}',sentinel_type=1))
+            tmp_dataset,tmp_feature_dataset = image_load(f'{dataset_path}{str(station)}',sentinel_type=2)
             bands_dataset[station-1] = tmp_dataset
-        return np.concatenate(bands_dataset.tolist())
-    if sentinel_type ==1:
+            feature_dataset[station-1] = tmp_feature_dataset
+            print(np.shape(feature_dataset))
+        return np.concatenate(bands_dataset.tolist()),np.concatenate(feature_dataset.tolist())
+    elif sentinel_type ==1:
         bands_dataset = np.empty(13,dtype=object)
         for station in range(1,14):
             tmp_dataset = image_load(f'{dataset_path}{str(station)}',sentinel_type=1)
+            print(np.shape(tmp_dataset))
             bands_dataset[station-1] = tmp_dataset
+
+            print(np.shape(bands_dataset))
         return np.concatenate(bands_dataset.tolist())
     else:
         print("[TYPE_ERROR] Given wrong sentinel type number! Please give '1' or '2' for progress.")
