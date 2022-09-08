@@ -61,7 +61,7 @@ def Sentinel2_extract(start_date,end_date,Area,station_number):
                     .filterDate(start_date,end_date)
                     # .filterDate('2016-02-29','2019-01-01')
                     .map(maskS2clouds)
-                    .filterMetadata('CLOUDY_PIXEL_PERCENTAGE', 'less_than', 5)
+                    .filterMetadata('CLOUDY_PIXEL_PERCENTAGE', 'less_than', 1)
                     .select(['B2','B3','B4','B5','B6','B7','B8','B8A','QA60','B11','B12'])
                     # .select(['B2','B3','B4'])
                     .filterBounds(Area))

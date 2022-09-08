@@ -22,8 +22,9 @@ Area_13 = ee.Geometry.Point(center_point(-99.388888036558,49.93140549249452,-99.
 
 AreaList = [Area_1,Area_2,Area_3,Area_4,Area_5,Area_6,Area_7,Area_8,Area_9,Area_10,Area_11,Area_12,Area_13]
 
-for station,area in enumerate(AreaList,1):
-    Sentinel1_extract(start_date,end_date,area,station)
-    Sentinel2_extract(start_date,end_date,area,station)
+# for station,area in enumerate(AreaList,1):
+#     # Sentinel1_extract(start_date,end_date,area,station)
+#     Sentinel2_extract(start_date,end_date,area,station)
 
-
+if __name__ == '__main__':
+    Sentinel2_extract(start_date,end_date,Area_1,'1')
